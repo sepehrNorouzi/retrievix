@@ -7,7 +7,7 @@ from app.services.extractors.base import TextExtractorBase
 
 class PDFTextExtractor(TextExtractorBase):
 
-    def extract(self, content: bytes) -> str:
+    async def extract(self, content: bytes) -> str:
         text = ""
         with pdfplumber.open(io.BytesIO(content)) as pdf:
             for page in pdf.pages:

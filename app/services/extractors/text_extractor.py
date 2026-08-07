@@ -3,7 +3,7 @@ from app.services.extractors.base import TextExtractorBase
 
 class TxtTextExtractor(TextExtractorBase):
 
-    def extract(self, content: bytes) -> str:
+    async def extract(self, content: bytes) -> str:
         try:
             return self.clean_text(content.decode("utf-8"))
         except UnicodeDecodeError:

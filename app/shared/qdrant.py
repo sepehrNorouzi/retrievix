@@ -14,7 +14,7 @@ async def init_qdrant() -> None:
             host=settings.qdrant_host,
             grpc_port=settings.qdrant_grpc_port,
             api_key=settings.qdrant_api_key,
-            prefer_grpc=True,
+            prefer_grpc=False,
             timeout=10,
         )
         collections = await _qdrant_client.get_collections()

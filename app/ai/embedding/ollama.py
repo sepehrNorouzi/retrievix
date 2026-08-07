@@ -23,15 +23,18 @@ class OllamaEmbeddingProvider(EmbeddingProvider):
         """
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             response = await client.post(
-                f"{self.base_url}/api/embeddings",
+                f"{self.base_url}/api/embed",
                 json={
                     "model": self.model,
-                    "prompt": text,
+                    "input": text,
                 },
             )
             response.raise_for_status()
             data = response.json()
-            return data["embedding"]
+            embedding = data["embeddings"]
+            if isinstance(embedding, list) and len(embedding) == 1 and isinstance(embedding[0], list):
+                embedding = embedding[0]
+            return embedding
 
     async def embed_batch(self, texts: List[str]) -> List[List[float]]:
         """

@@ -1,12 +1,13 @@
 import io
 
-import docx
+# import docx
 from app.services.extractors.base import TextExtractorBase
 
 
 class DocxTextExtractor(TextExtractorBase):
 
-    def extract(self, content: bytes) -> str:
+    async def extract(self, content: bytes) -> str:
+        return ""
         doc = docx.getdocumenttext(io.BytesIO(content))
         paragraphs = []
         for para in doc.paragraphs:

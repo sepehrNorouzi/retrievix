@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     qdrant_api_key: Optional[str] = os.environ.get("QDRANT_API_KEY", None)
     qdrant_init_collection: str = os.environ.get("QDRANT_INIT_COLLECTION", "retrievix")
     qdrant_vector_size: int = int(os.environ.get("QDRANT_VECTOR_SIZE", "768"))
+    qdrant_collection: str = os.environ.get("QDRANT_COLLECTION", "retrievix")
 
     ollama_base_url: str = os.environ.get("OLLAMA_BASE_URL", None)
     ollama_model: str = os.environ.get("OLLAMA_MODEL", 'nomic-embed-text')

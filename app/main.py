@@ -12,6 +12,7 @@ from app.shared.database import get_db
 from app.shared.logger import configure_logging, get_logger
 from app.shared.qdrant import init_qdrant, close_qdrant, get_qdrant
 from app.shared.redis import get_redis, init_redis, close_redis
+from app.api.document import router as documents_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -29,6 +30,8 @@ logger = get_logger()
 app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(LoggingMiddleware)
+
+app.include_router(documents_router)
 
 @app.get("/health")
 async def health(
