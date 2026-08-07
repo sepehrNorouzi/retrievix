@@ -1,4 +1,3 @@
-# app/services/redis_client.py
 from typing import Optional
 import redis.asyncio as redis
 from app.settings import settings
