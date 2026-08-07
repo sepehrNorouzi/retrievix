@@ -11,5 +11,24 @@ services:
       - QDRANT__SERVICE__GRPC_PORT=6334
     restart: no
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: retrievix-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_NUM_PARALLEL=4
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: |
+      ollama serve &
+      sleep 5
+      ollama pull nomic-embed-text
+      wait
+
 volumes:
   qdrant_storage:
+  ollama_data:

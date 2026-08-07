@@ -22,7 +22,7 @@ async def init_qdrant() -> None:
         if settings.qdrant_init_collection not in collection_names:
             await _qdrant_client.create_collection(
                 collection_name=settings.qdrant_init_collection,
-                vectors_config=VectorParams(size=1536, distance=Distance.COSINE,),
+                vectors_config=VectorParams(size=settings.qdrant_vector_size, distance=Distance.COSINE,),
             )
 
 async def close_qdrant() -> None:
