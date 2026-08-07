@@ -20,8 +20,6 @@ class Chunk(Base):
 
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    document = relationship("Document", back_populates="chunk")
-
     __table_args__ = (
         Index("idx_chunks_document_id", "document_id"),
         Index("idx_chunks_document_chunk_index", "document_id", "chunk_index", unique=True),
