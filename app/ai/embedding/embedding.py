@@ -1,5 +1,7 @@
 from .base import EmbeddingProvider
 from .ollama import OllamaEmbeddingProvider
+from ...settings import settings
+
 
 def get_embedding_provider() -> EmbeddingProvider:
     match settings.embedding_provider:
