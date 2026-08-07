@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Depends
+from qdrant_client import AsyncQdrantClient
 from redis.asyncio import Redis
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,12 +9,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.middleware.logging import LoggingMiddleware
 from app.shared.database import get_db
 from app.shared.logger import configure_logging, get_logger
+from app.shared.qdrant import init_qdrant, close_qdrant, get_qdrant
 from app.shared.redis import get_redis, init_redis, close_redis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Startup
     await init_redis()
+    await init_qdrant()
     yield
+    # Shutdown
+    await close_qdrant()
     await close_redis()
 
 configure_logging()
@@ -26,7 +32,8 @@ app.add_middleware(LoggingMiddleware)
 @app.get("/health")
 async def health(
     db: AsyncSession = Depends(get_db),
-    redis: Redis = Depends(get_redis)
+    redis: Redis = Depends(get_redis),
+    qdrant: AsyncQdrantClient = Depends(get_qdrant),
 ):
     # Check database
     try:
@@ -42,8 +49,17 @@ async def health(
     except Exception as e:
         redis_ok = False
 
+    try:
+        await qdrant.get_collections()
+        qdrant_ok = True
+    except Exception:
+        qdrant_ok = False
+
+    ok = all([db_ok, redis_ok, qdrant_ok])
+
     return {
-        "status": "ok" if db_ok and redis_ok else "degraded",
+        "status": "ok" if ok else "degraded",
         "database": db_ok,
-        "redis": redis_ok
+        "redis": redis_ok,
+        "qdrant": qdrant_ok,
     }

@@ -17,6 +17,10 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str = os.environ.get("DATABASE_URL")
 
+    qdrant_host: str = os.environ.get("QDRANT_HOST", "localhost")
+    qdrant_grpc_port: int = int(os.environ.get("QDRANT_GRPC_PORT", "6334"))
+    qdrant_api_key: Optional[str] = os.environ.get("QDRANT_API_KEY", None)
+    qdrant_init_collection: str = os.environ.get("QDRANT_INIT_COLLECTION", "retrievix")
 
     class Config:
         env_file = ".env"
