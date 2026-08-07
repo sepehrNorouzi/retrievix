@@ -6,6 +6,7 @@ from redis.asyncio import Redis
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.ai.embedding import get_embedding_provider, EmbeddingProvider
 from app.middleware.logging import LoggingMiddleware
 from app.shared.database import get_db
 from app.shared.logger import configure_logging, get_logger
@@ -34,6 +35,7 @@ async def health(
     db: AsyncSession = Depends(get_db),
     redis: Redis = Depends(get_redis),
     qdrant: AsyncQdrantClient = Depends(get_qdrant),
+    embedding_provider: EmbeddingProvider = Depends(get_embedding_provider),
 ):
     # Check database
     try:
@@ -55,11 +57,15 @@ async def health(
     except Exception:
         qdrant_ok = False
 
-    ok = all([db_ok, redis_ok, qdrant_ok])
+    embedding_provider_health = await embedding_provider.health()
+    embedding_provider_ok = embedding_provider_health.get("ok", False)
+
+    ok = all([db_ok, redis_ok, qdrant_ok, embedding_provider_ok])
 
     return {
         "status": "ok" if ok else "degraded",
         "database": db_ok,
         "redis": redis_ok,
         "qdrant": qdrant_ok,
+        "embedding_provider": embedding_provider_ok,
     }

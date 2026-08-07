@@ -1,6 +1,6 @@
 import asyncio
 import httpx
-from typing import List
+from typing import List, Dict, Any
 from app.ai.embedding.base import EmbeddingProvider
 from app.settings import settings
 
