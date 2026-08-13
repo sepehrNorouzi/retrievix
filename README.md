@@ -34,7 +34,7 @@ A Retrieval-Augmented Generation (RAG) application built with FastAPI that enabl
 - **Database**: PostgreSQL (SQLAlchemy + Alembic)
 - **Vector DB**: Qdrant
 - **Cache**: Redis
-- **AI**: Ollama (nomic-embed-text, llama3_2)
+- **AI**: Ollama (nomic-embed-text, llama3.2:1b)
 - **Containerization**: Docker + Docker Compose
 
 ## Prerequisites
@@ -71,7 +71,7 @@ QDRANT_COLLECTION=retrievix
 
 # Ollama
 OLLAMA_MODEL=nomic-embed-text
-OLLAMA_LLM_MODEL=llama3_2
+OLLAMA_LLM_MODEL=llama3.2:1b
 
 # App
 EXPOSED_PORT=8000
@@ -81,7 +81,7 @@ DEBUG=false
 ### 3. Start Services
 
 ```bash
-docker compose up -d
+make up
 ```
 
 This starts:
@@ -94,19 +94,35 @@ This starts:
 ### 4. Pull Ollama Models
 
 ```bash
-docker compose exec ollama ollama pull nomic-embed-text
-docker compose exec ollama ollama pull llama3_2
+make pull-models
 ```
 
 ### 5. Run Database Migrations
 
 ```bash
-docker compose exec app alembic upgrade head
+make migrate
 ```
 
 ### 6. Access API Documentation
 
 Open your browser to: `http://localhost:8000/docs`
+
+## Makefile Commands
+
+| Command | Description |
+|---------|-------------|
+| `make up` | Start all services |
+| `make down` | Stop all services |
+| `make restart` | Restart all services |
+| `make logs` | Tail logs for all services |
+| `make logs-app` | Tail app logs only |
+| `make status` | Show service status |
+| `make pull-models` | Pull Ollama models |
+| `make migrations msg="..."` | Generate a new migration |
+| `make migrate` | Run database migrations |
+| `make shell` | Open a shell in app container |
+| `make psql` | Connect to PostgreSQL |
+| `make clean` | Remove all containers, volumes, images |
 
 ## Local Development
 
@@ -183,7 +199,7 @@ curl -X POST "http://localhost:8000/ask/" \
       "score": 0.85
     }
   ],
-  "model": "llama3_2"
+  "model": "llama3.2:1b"
 }
 ```
 
