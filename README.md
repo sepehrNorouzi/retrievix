@@ -261,6 +261,15 @@ search-app/
 | `EXPOSED_PORT` | Application port | `8000` |
 | `DEBUG` | Enable debug mode | `false` |
 
-## License
+## 🤝 Contributing
+Pull requests are welcome. For major changes, please open an issue first.
 
-[Add your license here]
+## 📄 License
+[MIT](https://choosealicense.com/licenses/mit/)
+
+## 🙏 Acknowledgements
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [Qdrant](https://qdrant.tech/)
+- [Ollama](https://ollama.ai/)
+
+Built with ❤️ for local, private RAG.
