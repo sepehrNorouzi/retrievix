@@ -9,7 +9,7 @@ class OllamaEmbeddingProvider(EmbeddingProvider):
         self,
         model: str = "nomic-embed-text",
         base_url: str = None,
-        timeout: float = 30.0,
+        timeout: float = 60.0,
         max_concurrent: int = 10,
     ):
         self.model = model

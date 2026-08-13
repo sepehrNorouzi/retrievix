@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     ollama_base_url: str = os.environ.get("OLLAMA_BASE_URL", None)
     ollama_model: str = os.environ.get("OLLAMA_MODEL", 'nomic-embed-text')
 
+    llm_client: str = os.environ.get("LLM_CLIENT", 'ollama')
+    ollama_llm_base_url: str = os.environ.get("OLLAMA_LLM_BASE_URL", 'http://localhost')
+    ollama_llm_model: str = os.environ.get("OLLAMA_LLM_MODEL", 'llama3_2')
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

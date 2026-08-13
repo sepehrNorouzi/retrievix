@@ -33,3 +33,9 @@ class ChunkRepository(BaseRepository):
         await self.db.execute(
             delete(Chunk).where(Chunk.document_id == doc_id)
         )
+
+    async def get_by_ids(self, ids: List[uuid.UUID]) -> List[Chunk]:
+        result = await self.db.execute(
+            select(Chunk).where(Chunk.id.in_(ids))
+        )
+        return list(result.scalars().all())
