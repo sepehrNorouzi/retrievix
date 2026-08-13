@@ -10,31 +10,54 @@ class OllamaEmbeddingProvider(EmbeddingProvider):
         model: str = "nomic-embed-text",
         base_url: str = None,
         timeout: float = 60.0,
-        max_concurrent: int = 10,
+        max_concurrent: int = 1,
     ):
         self.model = model
         self.base_url = (base_url or settings.ollama_url).rstrip("/")
         self.timeout = timeout
         self.max_concurrent = max_concurrent
 
+
+        self.client = httpx.AsyncClient(
+            base_url=self.base_url,
+            timeout=httpx.Timeout(
+                connect=10.0,
+                read=120.0,
+                write=30.0,
+                pool=30.0,
+            ),
+            limits=httpx.Limits(
+                max_connections=max_concurrent,
+                max_keepalive_connections=max_concurrent,
+            ),
+        )
+
     async def embed(self, text: str) -> List[float]:
         """
         Generate embedding for a single text.
         """
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
-            response = await client.post(
-                f"{self.base_url}/api/embed",
-                json={
-                    "model": self.model,
-                    "input": text,
-                },
-            )
-            response.raise_for_status()
-            data = response.json()
-            embedding = data["embeddings"]
-            if isinstance(embedding, list) and len(embedding) == 1 and isinstance(embedding[0], list):
-                embedding = embedding[0]
-            return embedding
+        response = await self.client.post(
+            "/api/embed",
+            json={
+                "model": self.model,
+                "input": text,
+            },
+        )
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        embedding = data["embeddings"]
+
+        if (
+                isinstance(embedding, list)
+                and len(embedding) == 1
+                and isinstance(embedding[0], list)
+        ):
+            embedding = embedding[0]
+
+        return embedding
 
     async def embed_batch(self, texts: List[str]) -> List[List[float]]:
         """
